@@ -1,0 +1,113 @@
+<style type="text/css" media="screen">
+	.blue{
+	color:blue;text-decoration:underline;cursor:pointer;
+	}
+	#main{
+	float:left; height:100%;
+	}
+	#results1{
+	position:absolute; left:50%;
+	}
+	#reports{
+	position:absolute;left:20%;
+	}
+	#indicators1{
+	position:absolute;left:80%;
+	}
+	#indicators{
+	position:absolute; right:50%;
+	}
+	#charts{
+	position:absolute;right:100%;
+	}
+	#maps{
+	position:relative; left:40px;
+	}
+</style>
+<script type="text/javascript">	
+	var id1,id,href,idn;	
+	var data;
+	var  ChartData={};
+	var indiName = [], indiNo = [];
+	var l=0, k=0, j=0, c;
+
+	$(document).ready(function(){
+
+	            $("#results1").html("");
+	            $("#indicators1").html("");
+	            $.get('../api/charts/query/'+$(this).val()+'.json', function(json){
+	                $(json.charts).each(function(i, data){
+						theId=data.href;
+						id=data.href;
+						id1=data.href;
+	                    var anchor = $("<a id='links' onclick='#'></a>").append(data.name);
+						$(anchor).bind('click',{'name':data.name,'id':data.href},function(event){
+							$("#indicators1").html("");		
+							$.get(event.data.id+'.json',function(json){ 
+								$(json.indicators).each(function(i, data){			
+									var append='<div>';
+									append=append+'<p>'+data.name+'</p>';
+									append=append+'<p><a href=\''+data.href+'\'>More Details</a></p>';
+									append=append+'<hr/>';
+									$("#indicators1").append(append);																	
+									});
+								});
+							});
+
+						$("#results1").html("");
+					    $.get(id+'.json',function(json)
+						{ 
+						 	$(json.indicators).each(function(i, data)
+					        {
+								idn=data.id;
+								/*var anchor = $("<a id='"+idn+"'onclick='javascript:printIt(id),populate()'></a>").append(data.name).append(" id is -> ").append(data.id).append("</br>");
+					        	$("#results1").append(anchor);*/
+
+					        	c=0;
+					        	for(j=0;j<k;j++)
+					        		{
+					        			if(data.name === indiName[j])
+					        					{
+					        						c++;
+					        					}
+					        		}
+
+					        	if(c == 0)
+					        		{
+					        			indiName[l] = data.name;
+					        			var anchor1 = $("<a id='"+idn+" 'onclick='javascript:populate()' ></a>").append(indiName[l]).append("</br>");
+							        	$("#indicators").append(anchor1);
+					        		}
+					        	l++;
+					        	k++;
+
+					        });
+						 });					    					                     
+	                        });
+	                    });    	              
+	            });
+
+	$(document).ready(function(){
+	            $("#results").html("");
+	            $("#indicators").html("");
+	            $.get('../api/indicatorGroups/query/'+$(this).val()+'.json', function(json){
+	                $(json.indicatorGroups).each(function(i, data){
+						theId=data.href;
+						id=data.href;
+						id1=data.href;
+							//var anchor1 = $("<p class='blue' id='"+id1+"' onclick='javascript:printIt(id)'></p>").append(data.name);
+							//$("#results").append(anchor1);                          
+	                        });
+	                    });    	              
+	            });
+
+</script>
+<div id="main" >
+<b>Indicators Used </b>
+<div id="results">Results</div>
+</div>
+<div id="indicators">
+<h1>Used Indicators</h1></br>
+</div>
+<div id="results1">Results1</div>
+<div id="indicators1">Indicators1</div>
