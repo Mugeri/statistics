@@ -1,65 +1,62 @@
 <style type="text/css" media="screen">
 	#not{
 		float:left;
+		border:3px solid black;
 	}
 	#used{
 		float:right;
+		border:3px solid black;
 	}
 	#use{
 		float:left;
+		width: 15%;
+		border:3px solid black;
+		paddy: 5px;
 	}
 	#use2{
+		width: 15%;
 		float:left;
+		border:3px solid black;
+	}
+	.pirobox_gal1{
+		width: 304px;
+		height: 165px;
+		display: block;
 	}
 </style>
 
 <script type="text/javascript">
-	var  id, idi, data, indiName = [], indiNameid = [], indiNoName = [], indiall = [], indiallid = [], a = 0, b = 0, c = 0, d = 0, e = 0, f = 0;
-
+	var  id, idi, data, idn, chart, a = 0, b = 0, c = 0, d = 0, e = 0, f = 0, i = 0, m = 0, x = 0, y=0;
+	var indiName = [], indichart = [], indiNameid = [], indiNoName = [], indiall = [], indiallid = [], used, nonused, total=0;
 	$(document).ready(function()
 	{
-
-		$.get('../api/indicators/query/'+$(this).val()+'.json', function(json)
-				{
-					$(json.indicators).each(function(i, data)
-					{
-						id = data.href;
-						$.get(id+'.json', function(json)
-						{
-							d = 0;
-
-							for(a = 0; a < b; a++)
-								{
-									if(data.id === indiallid[a])
-										{
-											d++;
-										}
-								}
-
-							if(d === 0)
-								{
-									indiallid[c] = data.id;
-									indiall[c] = data.name;
-									$("#not").append(indiall[c]).append("<br/>").append(a).append("<hr/>");
-									$("#use").append(indiallid[c]).append("<hr/>");
-									e++;
-								}
-
-							b++;
-							c++;
-						});
-					});						
-
 		$.get('../api/charts/query/'+$(this).val()+'.json', function(json)
 				{
 					b = c = 0;
+					//work_with_splash2();
 
-					$(json.charts).each(function(i, data1)
+					$(json.charts).each(function(i, data)
 					{
-						id1 = data.href;
-						$.get1(id+'.json', function(json)
+						id = data.href;
+						for(var h = 0; h < indichart.lenth; h++)
 						{
-							$(json.indicators).each(function(i, data1)
+							if(data.href === indichart[h])
+								{
+									i++;
+								}
+						}
+
+						if(i == 0)
+						{
+							indichart[m] = data.href;
+							m++;
+						}
+						i = 0;
+
+						$.get(id+'.json', function(json)
+						{
+							chart = data.href;
+							$(json.indicators).each(function(i, data)
 							{
 								d = 0;
 
@@ -74,49 +71,96 @@
 									{
 										indiNameid[c] = data.id;
 										indiName[c] = data.name;
-										$("#used").append(indiName[c]).append("<br/>").append(f).append("<hr/>");
-										$("#use2").append(indiNameid[c]).append("<hr/>");
+
+										/*var anchor = $("<a id='"+idn+"'  onclick='javascript:chartLoad(id)' class="pirobox_gal1">"indiName[c]"<a>");					  
+										$("#used").append(anchor);								
+										$("#used").append(indiName[c]).append("<hr/>");
+										chartload(data.id);		
+										$("#use2").append(indiNameid[c]).append("<hr/>");*/
+										var append='<div>';
+										append=append+'<p><a href=\''+chart+'/data\'>'+data.name+'</a></p>';
+										append=append+'<hr/>';
+										$("#used").append(append);
 										f++;
+										x++;
+										
 									}
+									
+									$("#use").html("<h1>Used<h1></br>"+x);
+									
 								b++;
 								c++;
 							});
+							/*used=indiNameid.length;
+							nonused=indiallid.length;
+							total=used+nonused;*/
+							
+							//work_with_splash();
 						});					
 					});
 				});
-				function work_with_splash()
+	});
+
+	$(document).ready(function()
+	{
+
+		//$('work_with_splash').delay(5000).fadeIn();
+
+		$.get('../api/indicators/query/'+$(this).val()+'.json', function(json)
+				{
+					work_with_splash();
+
+					$(json.indicators).each(function(i, data)
+					{
+						b = c = 0;
+
+						id = data.href;
+						$.get(id+'.json', function(json)
+						{
+							d = 0;
+
+							for(var g = 0; g < indiNameid.length; g++)
+							{
+								if(data.id === indiNameid[g])
+								{
+									d++;
+								}
+							}
+
+							for(a = 0; a < b; a++)
+								{
+									if(data.id === indiallid[a])
+										{
+											d++;
+										}
+								}
+
+							if(d === 0)
+								{
+									indiallid[c] = data.id;
+									indiall[c] = data.name;
+									$("#not").append(indiall[c]).append("<hr/>");
+									//$("#use").append(indiallid[c]).append("<hr/>");
+									e++;
+									y++;
+								}
+							$("#use2").html("<h1>All<h1></br>"+(y+x));
+							$("#use").html("<h1>percentage used<h1></br>"+(x/(x+y))*100);
+							$("#use2").html("<h1>percentage not used<h1></br>"+(100-(x/(x+y))*100));
+							
+							b++;
+							c++;
+						});
+						
+					});										
+				});
+	});
+
+	function work_with_splash()
 	{
 	    alert("Click to show Not used");
 		//$("#not1").append(indiName[1]).append("<hr/>").delay(800000);		
 	}
-
-	function chartLoad(idn)
-	{
-		/*$("#use").html("");
-		$.get('../api/charts/query/'+'.json', function(json) 
-	    {
-			$(json.charts).each(function(i, data)
-			{
-		        var chartid=data.id;
-				var charthref=data.href;
-				$.get(charthref+'.json', function(chart) 
-				{
-						$(chart.indicators).each(function(i, dat)
-						{
-							if(dat.id==idn)
-							{
-								//var anchor = $("<a href = "charthref"/data >Chart<a>");
-								//$("#use2").append("<div> <a href=\""charthref"/data\" class="pirobox_gal1">Chart</a> </div>");
-								//$("#use2").append("<strong>Hello</strong>");
-								//var anchor = $("<img  >").attr("Src",charthref+'/data').append("<br />"); 
-							 	//$("#use2").append(anchor);
-							}
-						});
-				});	  
-		
-			 });			
-		  });*/
-		}
 
 	function work_with_splash2()
 	{
@@ -453,12 +497,6 @@
 
 </script>
 <div id="not"><h1>Indicators that have NOT been used</h1></div>
-<div id="use"><h3>tests</h3></div>
-<div id="use2"><h4>tests2</h4></div>
-<div id="used"><h2>Indicators that have been used</h2></div>
-</script>
-
-<div id="not"><h1>Indicators that have NOT been used</h1></div>
-<div id="use"><h3>tests</h3></div>
+<div id="use"><h3>Used</h3></div>
 <div id="use2"><h4>tests2</h4></div>
 <div id="used"><h2>Indicators that have been used</h2></div>
